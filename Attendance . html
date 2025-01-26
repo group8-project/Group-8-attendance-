@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login and Attendance System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .login-form, .attendance-dashboard {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+        .login-form input {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .login-form button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: white;
+            border: none;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+        th {
+            background-color: #f0f0f0;
+        }
+        .green-check {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+
+<div id="login-page" class="login-form">
+    <h2>Login</h2>
+    <input type="text" id="name" placeholder="Name">
+    <input type="email" id="email" placeholder="Email">
+    <input type="text" id="matric-number" placeholder="Matriculation Number">
+    <button onclick="login()">Login</button>
+</div>
+
+<div id="attendance-page" class="attendance-dashboard" style="display: none;">
+    <header>
+        <h1>Attendance System</h1>
+    </header>
+    <h2>Attendance Summary</h2>
+    <p>Total Students: <span id="total-students">0</span></p>
+    <p>Present Students: <span id="present-students">0</span></p>
+    <p>Absent Students: <span id="absent-students">0</span></p>
+    <h2>Attendance Table</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Student ID</th>
+                <th>Student Name</th>
+                <th>Attendance Status</th>
+            </tr>
+        </thead>
+        <tbody id="attendance-table-body"></tbody>
+    </table>
+</div>
+
+<script>
+    var validUsers = [
+        { email: "user@veritas.com", name: "Chime Divine", matric: "VUG/SEN/24/12399" },
+        { email: "user@veritas.com", name: "Aje Blessing", matric: "VUG/SEN/24/12860" },
+        { email: "user@veritas.com", name: "Oduma John", matric: "VUG/SEN/24/11497" },
+        { email: "user@veritas.com", name: "Ajar Success", matric: "VUG/SEN/24/11522" },
+        { email: "user@veritas.com", name: "Ogunmola Hansel", matric: "VUG/SEN/24/11649" },
+        { email: "user@veritas.com", name: "Ayilla Emmanuel", matric: "VUG/SEN/24/11437" },
+        { email: "user@veritas.com", name: "Agwu Divine", matric: "VUG/SEN/24/11439" },
+        { email: "user@veritas.com", name: "Obilo Micheal", matric: "VUG/SEN/24/11393" },
+        { email: "user@veritas.com", name: "Gbirison Iyimide", matric: "VUG/SEN/24/12154" },
+        { email: "user@veritas.com", name: "Eleje Francis", matric: "VUG/SEN/24/12368" },
+    ];
+
+    var attendanceData = [
+        { studentId: 1, studentName: "Chime Divine", attendanceStatus: "Absent", loggedIn: false },
+        { studentId: 2, studentName: "Aje Blessing", attendanceStatus: "Absent", loggedIn: false },
+        { studentId: 3, studentName: "Oduma John", attendanceStatus: "Absent", loggedIn: false },
+        { studentId: 4, studentName: "Ajar Success", attendanceStatus: "Absent", loggedIn: false },
+        { studentId: 5, studentName: "Ogunmola Hansel", attendanceStatus: "Absent", loggedIn: false },
+        { studentId: 6, studentName: "Ayilla Emmanuel", attendanceStatus: "Absent", loggedIn: false },
+        { studentId: 7, studentName: "Agwu Divine", attendanceStatus: "Absent", loggedIn: false },
+        { studentId: 8, studentName: "Obilo Micheal", attendanceStatus: "Absent", loggedIn: false },
+        { studentId: 9, studentName: "Gbirison Iyimide", attendanceStatus: "Absent", loggedIn: false },
+        { studentId: 10, studentName: "Eleje Francis", attendanceStatus: "Absent", loggedIn: false },
+      
+
+    ];
+
+    function login() {
+        var email = document.getElementById("email").value;
+        var name = document.getElementById("name").value;
+        var matric = document.getElementById("matric-number").value;
+
+        var isValid = false;
+
+        for (var i = 0; i < validUsers.length; i++) {
+            if (validUsers[i].email === email && validUsers[i].name === name && validUsers[i].matric === matric) {
+                isValid = true;
+                break;
+            }
+        }
+
+        if (isValid) {
+            document.getElementById("login-page").style.display = "none";
+            document.getElementById("attendance-page").style.display = "block";
+
+            for (var j = 0; j < attendanceData.length; j++) {
+                if (attendanceData[j].studentName === name) {
+                    attendanceData[j].loggedIn = true;
+                    attendanceData[j].attendanceStatus = "Present";
+                    break;
+                }
+            }
+
+            updateTable();
+        } else {
+            alert("Invalid login details!");
+        }
+    }
+
+    function updateTable() {
+        var tableBody = document.getElementById("attendance-table-body");
+        tableBody.innerHTML = "";
+
+        var totalStudents = attendanceData.length;
+        var presentStudents = 0;
+
+        for (var i = 0; i < attendanceData.length; i++) {
+            var row = "<tr>";
+            row += "<td>" + attendanceData[i].studentId + "</td>";
+            row += "<td>" + attendanceData[i].studentName + "</td>";
+            if (attendanceData[i].loggedIn && attendanceData[i].attendanceStatus === "Present") {
+                row += "<td class='green-check'>✔ Present</td>";
+                presentStudents++;
+            } else {
+                row += "<td>Absent</td>";
+            }
+            row += "</tr>";
+
+            tableBody.innerHTML += row;
+        }
+
+        document.getElementById("total-students").innerText = totalStudents;
+        document.getElementById("present-students").innerText = presentStudents;
+        document.getElementById("absent-students").innerText = totalStudents - presentStudents;
+    }
+</script>
+
+</body>
+</html>
